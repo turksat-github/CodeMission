@@ -2,6 +2,7 @@
 sum of the even-valued terms of
 Fibonacci sequence under four million
 1, [2], 3, 5, [8], 13, 21, [34], 55, 89, [144]...
+4613730
 */
 var a = Int (1)
 var b = Int (2)
