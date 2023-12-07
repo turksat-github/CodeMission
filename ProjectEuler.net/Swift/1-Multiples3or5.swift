@@ -1,6 +1,7 @@
 /*
 if the number is divisible by 3 and 5
 sum all of the correct numbers until 1000
+233168
 */
 var a = Int (3)
 var b = Int (5)
