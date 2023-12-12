@@ -1,5 +1,6 @@
 '''
 find the smallest positive number that is evenly divisible (no remainder) by all of the numbers from 1 to 20
+232792560
 '''
 n = 20
 b = 0
