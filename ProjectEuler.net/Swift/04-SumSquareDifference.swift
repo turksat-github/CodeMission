@@ -3,9 +3,10 @@ the difference between
 the sum of the squares of the first ten natural numbers
 and
 the square of the sum of the first ten natural numbers
+25164150
 */
 let n = 100
-var sum1 = Int(0), sum2 = Int(0)
+var sum1 = Int (0), sum2 = Int (0)
 for i in 1...n {
     sum1 += i * i
 }
