@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/dbkm-omer.gulmen/workspace/CodeMission/CodeMission/LeetCode.com",
-      "program": "c:/Users/dbkm-omer.gulmen/workspace/CodeMission/CodeMission/LeetCode.com/build/Debug/outDebug",
+      "cwd": "c:/Users/dbkm-omer.gulmen/workspace/CodeMission/CodeMission/C",
+      "program": "c:/Users/dbkm-omer.gulmen/workspace/CodeMission/CodeMission/C/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
