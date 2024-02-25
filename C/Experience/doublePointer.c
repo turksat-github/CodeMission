@@ -2,22 +2,49 @@
 #include <stdlib.h>
 
 int main (int argc, char **argv, char **envp) {
-    int i, j, count, r = 3, c = 4;
-    //int (*arr) [col] = calloc (row, sizeof (*arr));
-    int points [] [4] = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 1, 11, 12}};
-    //int arr [r] [c] = {{0, 1, 2, 3, 4}, {5, 6, 7, 8, 9}};
-    int (*ptr) [c] = points;
-    printf ("%d\n", *(*(ptr + 2) + 3));
-
-    int **matrix = (int **) malloc (r * sizeof (int *));
-    for (i = 0; i < r; ++ i) {
-        matrix [i] = (int *) malloc (c * sizeof (int));
+    int i, j, count, rSize = 5, *cSize;
+    cSize = (int *) malloc (rSize * sizeof (int));
+    *(cSize + 0) = 3;
+    *(cSize + 1) = 2;
+    *(cSize + 2) = 1;
+    *(cSize + 3) = 4;
+    *(cSize + 4) = 4;
+    int **a = (int **) malloc (rSize * sizeof (int *));
+    for (i = 0; i < rSize; ++ i) {
+        *(a + i) = (int *) malloc (*(cSize + i) * sizeof (int));
     }
-
+    *(*(a + 0) + 0) = 11;
+    *(*(a + 0) + 1) = 12;
+    *(*(a + 0) + 2) = 13;
+    *(*(a + 1) + 0) = 21;
+    *(*(a + 1) + 1) = 22;
+    *(*(a + 2) + 0) = 31;
+    *(*(a + 3) + 0) = 41;
+    *(*(a + 3) + 1) = 42;
+    *(*(a + 3) + 2) = 43;
+    *(*(a + 3) + 3) = 44;
+    *(*(a + 4) + 0) = 51;
+    *(*(a + 4) + 1) = 52;
+    *(*(a + 4) + 2) = 53;
+    *(*(a + 4) + 3) = 54;
+    for (i = 0; i < rSize; ++ i) {
+        for (j = 0; j < *(cSize + i); ++ j) {
+            printf ("%d ", *(*(a + i) + j));
+        }
+        printf ("\n");
+    }
     //Code for further processing and free the dynamically allocated memory
-    for (i = 0; i < r; ++ i) {
-        free (matrix [i]);
+    for (i = 0; i < rSize; ++ i) {
+        free (*(a + i));
     }
-    free (matrix);
+    free (a);
     return EXIT_SUCCESS;
 }
+/*
+**a = {[11, 12, 13], [21, 22], [31], [41, 42, 43, 44], [51, 52, 53, 54]}
+rSize = 5
+*cSize = {3, 2, 1, 4, 4}
+
+int points [] [4] = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 1, 11, 12}};
+int (*ptr) [c] = points;
+*/
