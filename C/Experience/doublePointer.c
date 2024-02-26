@@ -33,7 +33,6 @@ int main (int argc, char **argv, char **envp) {
         }
         printf ("\n");
     }
-    //Code for further processing and free the dynamically allocated memory
     for (i = 0; i < rSize; ++ i) {
         free (*(a + i));
     }
