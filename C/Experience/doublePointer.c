@@ -2,16 +2,16 @@
 #include <stdlib.h>
 
 int main (int argc, char **argv, char **envp) {
-    int i, j, count, rSize = 5, *cSize;
-    cSize = (int *) malloc (rSize * sizeof (int));
+    int i, j, rSize = 5, *cSize;
+    cSize = (int *) calloc (rSize, sizeof (int));
     *(cSize + 0) = 3;
     *(cSize + 1) = 2;
     *(cSize + 2) = 1;
     *(cSize + 3) = 4;
     *(cSize + 4) = 4;
-    int **a = (int **) malloc (rSize * sizeof (int *));
+    int **a = (int **) calloc (rSize, sizeof (int *));
     for (i = 0; i < rSize; ++ i) {
-        *(a + i) = (int *) malloc (*(cSize + i) * sizeof (int));
+        *(a + i) = (int *) calloc (*(cSize + i), sizeof (int));
     }
     *(*(a + 0) + 0) = 11;
     *(*(a + 0) + 1) = 12;
