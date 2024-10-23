@@ -8,7 +8,7 @@ Girdi Biçimi:
 İlk satırda bir adet tam sayı N verilecektir. Bu sayı adadaki öğrenci sayısıdır.
 
 Çıktı Biçimi:
-Oyun başında Buğdayın ıspanak yemek zorunda kalmaması için oturması gereken koltuğun numarası
+Oyun başında Bahadır'ın ıspanak yemek zorunda kalmaması için oturması gereken koltuğun numarası
 
 Sınırlar:
 1 ≤ N ≤ 10e9
