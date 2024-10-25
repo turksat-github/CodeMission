@@ -54,6 +54,30 @@ Altgörev 4 (28 puan) : 1 ≤ N ≤ 10e5, 1 ≤ Eddie'nin söylediği sayılar �
 #include <stdio.h>
 #include <stdlib.h>
 int main (int argc, char * (* argv), char * (* envp)) {
-    
+    int a;//dizi uzunluğu
+    scanf ("%d%*c", & a);
+    int *b;//dizideki sayılar
+    b = (int *) calloc (a, sizeof (int));
+    int c = 0;
+    char d;
+    do {
+        scanf ("%d%c", (b + c), & d);
+        ++ c;
+    } while (d != '\n');
+    int e, f, g, h, j, i, t;
+    for (e = 0; e < a - 1; ++ e) {
+        for (f = 0, g = e, h = 0, j = 0, i = 0; f < g; ++ f) {
+            t = (* (b + f) - * (b + g));
+            if (t < 0) {
+                t *= -1;
+            }
+            if ((t * (* (b + f) + * (b + g))) > i) {
+                i = (* (b + f) - * (b + g))  * (* (b + f) + * (b + g));
+                h = f;
+                j = g;
+            }
+        }
+        printf ("%d %d\n", h + 1, j + 1);
+    }
     return EXIT_SUCCESS;
 }
