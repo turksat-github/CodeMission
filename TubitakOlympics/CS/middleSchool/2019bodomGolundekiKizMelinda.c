@@ -65,16 +65,18 @@ int main (int argc, char * (* argv), char * (* envp)) {
         ++ c;
     } while (d != '\n');
     int e, f, g, h, j, i, t;
-    for (e = 0; e < a - 1; ++ e) {
-        for (f = 0, g = e, h = 0, j = 0, i = 0; f < g; ++ f) {
-            t = (* (b + f) - * (b + g));
-            if (t < 0) {
-                t *= -1;
-            }
-            if ((t * (* (b + f) + * (b + g))) > i) {
-                i = (* (b + f) - * (b + g))  * (* (b + f) + * (b + g));
-                h = f;
-                j = g;
+    for (e = 0; e < a; ++ e) {
+        for (f = 0, h = 0, j = 0, i = 0; f <= e; ++ f) {
+            for (g = 0; g <= e; ++ g) {
+                t = (* (b + f) - * (b + g)) * (* (b + f) + * (b + g));
+                if (t < 0) {
+                    t *= -1;
+                }
+                if (t > i) {
+                    i = t;
+                    h = f;
+                    j = g;
+                }
             }
         }
         printf ("%d %d\n", h + 1, j + 1);
