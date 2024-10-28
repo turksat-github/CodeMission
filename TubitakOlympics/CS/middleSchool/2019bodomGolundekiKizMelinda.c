@@ -1,7 +1,7 @@
 /*
 BODOM GÖLÜNDEKİ KIZ MELİNDA
 
-Yıllar yıllar önce Bodom Gölü'ne yakın bir yerleşkeye kurulmuş köyde bir kız yaşarmış. Köyün sevimli kızı Melinda ve onun hayali arkadaşı Eddie'nin canları çok sıkılmış ve Bodom gölünün yanına kamp ateşi yakıp birlikte oyun oynamaya karar vermişler. Eddie sırayla Melinda'ya sayılar söylemiş ve şuana kadar söylediği sayılardan iki tanesini seçmesini istemiştir. Oyun kurallarına göre Melinda'nın o turu kazanabilmesi için seçtiği sayıların farkları ile toplamlarının çarpımı seçilebilecek tüm ikiler arasında maksimum olmalıydı. Tabii ki de Melinda çok zeki bir kız olduğu için tüm turları kazanmıştır. Size Eddie'nin söylediği sayılar sırası ile verilmektedir ve sizden istenilen her turda Melinda'nın hangi iki sayıyı seçtiğini yazdırmanız.
+Yıllar yıllar önce Bodom Gölü'ne yakın bir yerleşkeye kurulmuş köyde bir kız yaşarmış. Köyün sevimli kızı Melinda ve onun hayali arkadaşı Eddie'nin canları çok sıkılmış ve Bodom gölünün yanına kamp ateşi yakıp birlikte oyun oynamaya karar vermişler. Eddie sırayla Melinda'ya sayılar söylemiş ve şuana kadar söylediği sayılardan iki tanesini seçmesini istemiştir. Oyun kurallarına göre Melinda'nın o turu kazanabilmesi için seçtiği sayıların farkları ile toplamlarının çarpımı seçilebilecek tüm ikiler arasında maksimum olmalıydı. Tabii ki Melinda çok zeki bir kız olduğu için tüm turları kazanmıştır. Size Eddie'nin söylediği sayılar sırası ile verilmektedir ve sizden istenilen her turda Melinda'nın hangi iki sayıyı seçtiğini yazdırmanız.
 
 Girdi Biçimi
 İlk satırda: Eddie'nin söylediği sayıların sayısını temsil eden N sayısı.
@@ -15,7 +15,7 @@ Eddie'nin söylediği sayılar arasında kaçıncı sırada söylenmiş olduğun
 Dolayısıyla ai ≤ bi ≤ i olmalıdır. Ayrıca her turda sadece bir adet cevap olduğu garanti edilmektedir.
 
 Limitler
-1 ≤ N ≤ 10e5, 1 ≤ Eddie'nin söylediği sayılar ≤ 10e50
+1 ≤ N ≤ 10e5, 1 ≤ Eddie'nin söylediği sayılar ≤ 10e5
 
 Girdi 1
 4
