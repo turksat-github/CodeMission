@@ -48,7 +48,34 @@ Altgörev 6 (42 puan): Ek bir kısıtlama yoktur.
 */
 #include <stdio.h>
 #include <stdlib.h>
-int main (int argc, char * (* argv), char * (* envp)) {
-    
+int main (int argc, char (* (* argv)), char (* (* envp))) {
+    int a, b;//kaç sayı var ve fark ne kadar?
+    scanf ("%d %d%*c", &a, &b);//kaç sayı olduğunu ve fark değerini al
+    int *c;//sayıların yerleştirileceği pointer
+    c = (int *) calloc (a, sizeof (int));//liste için bellekte yer açılır
+    int d, e, f, g;
+    for (e = 0; e < a; ++ e) {
+        scanf ("%d%*c", (c + e));//kullanıcıdan sayılar alınıp listeye konulur
+    }
+    for (e = 0; e < a - 1; ++ e) {//liste büyükten küçüğe sıralanır
+        for (d = e + 1; d < a; ++ d) {
+            if (* (c + e) < * (c + d)) {
+                f = * (c + e);
+                * (c + e) = * (c + d);
+                * (c + d) = f;
+            }
+        }
+    }
+    for (d = 0, g = 0; d < a - 1; ++ d) {
+        for (e = d + 1, f = 1; e < a; ++ e, ++ f) {
+            if (* (c + d) - * (c + e) > b) {
+                break;
+            }
+        }
+        if (f > g) {
+            g = f;
+        }
+    }
+    printf ("%d", g);
     return EXIT_SUCCESS;
 }
