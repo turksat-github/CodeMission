@@ -11,16 +11,16 @@ Her node için sol tarafındaki bütün node'lar kendi değerinden küçük eşi
      7
    /   \
   5     10
- / \   / \
-2   6 8   20
+ / \    / \
+2   6  8   20
 Bu ağaç yukarıdaki tüm şartları sağladığı için bir BST'dir.
 
 Örnek2:
      2
    /   \
   1     5
- / \   / \
-0   3 4   6
+ / \    / \
+0   3  4   6
 Ancak bu ağaç değildir. Çünkü 2'nin sol tarafında bulunan 3 değeri 2'den büyüktür.
 
 Girdi Biçimi
