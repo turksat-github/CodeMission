@@ -1,8 +1,8 @@
 /*
 EMRE'NİN KOCAMAN SAYILARI
 
-Emre oldu olası sayılara derin bir ilgi beslemistir. Annesi Emre'nin doğum gününde ona n adet sayı almıştır ve Emre aylarca bu sayılarla oynadıktan sonra artık canı sıkılmaya başlamıştır. Emre sayıları sevdiği gibi kocaman sayıları da sevmektedir. Bir gün elindeki n sayıyı birleştirebileceğini fark etmiştir. Bu n adet sayıyı uç uca ekleyerek yeni bir sayı oluşturmaya karar vermiştir. Bu yeni sayının da olabildiğince büyük olmasını istemektedir.
-Mesela elindeki sayılar [10, 71, 5] olsun (n = 3). Emre bu sayıları 71510 sırasıyla birlestirirse yeni sayi 71510 olur. Eğer 10, 5 ve 71 sırasıyla birleştirirse yeni sayı 10571 olur. 71510 oluşturabileceği en büyük sayıdır dolayısıyla bu sayıyı oluşturmalıdır.
+Emre oldu olası sayılara derin bir ilgi beslemistir. Annesi Emre'nin doğum gününde ona n adet sayı almıştır. Emre aylarca bu sayılarla oynadıktan sonra artık canı sıkılmaya başlamıştır. Emre sayıları sevdiği gibi kocaman sayıları da sevmektedir. Bir gün elindeki n sayıyı birleştirebileceğini fark etmiştir. Bu n adet sayıyı uç uca ekleyerek yeni bir sayı oluşturmaya karar vermiştir. Bu yeni sayının da olabildiğince büyük olmasını istemektedir.
+Mesela elindeki sayılar [10, 71, 5] olsun (n = 3). Emre bu sayıları 71, 5, 10 sırasıyla birlestirirse yeni sayi 71510 olur. Eğer 10, 5 ve 71 sırasıyla birleştirirse yeni sayı 10571 olur. 71510 oluşturabileceği en büyük sayıdır dolayısıyla bu sayıyı oluşturmalıdır.
 Size Emre'nin kaç tane sayısının olduğu ve bu sayılar verilecek. Sonra sizden Emre'nin uç uca ekleyerek oluşturacağı en büyük sayıyı bulmanız istenmektedir. Her sayıyı tam olarak bir kere kullanmanız gerekmektedir.
 
 Girdi Biçimi
@@ -39,7 +39,56 @@ Altgörev 3 (30 puan) : 1 ≤ N ≤ 10e5 , 1 ≤ Emre'nin sayıları ≤ 10e9
 */
 #include <stdio.h>
 #include <stdlib.h>
-int main (int argc, char * (* argv), char * (* envp)) {
-    
+int main (int argc, char (* (* argv)), char (* (* envp))) {
+    int a;//Kaç sayı var?
+    scanf ("%d%*c", &a);//Kaç sayı olduğunu al
+    int *b, *c, *d;//Sayıların asılları, kopyaları ve sıra numaraları
+    b = (int *) calloc (a, sizeof (int));//Asıl sayıların listesi
+    c = (int *) calloc (a, sizeof (int));//Kopya sayıların listesi
+    d = (int *) calloc (a, sizeof (int));//Sıra numaralarının listesi
+    int e, f, g, h;//h en büyük basamak sayısı
+    for (e = 0; e < a; ++ e) {
+        scanf ("%d%*c", (b + e));//Asıllar alınır
+        * (c + e) = * (b + e);//Kopyalara kopyalar konulur
+        * (d + e) = e;//sıradan sıra numaraları verilir
+    }
+    for (e = 0, h = 1; e < a; ++ e) {
+        for (f = 1, g = 1; ; ++ f) {//f her sayı için basamak sayısı
+            g *= 10;//basamak sayısını bulasıya kadar g 10'a katlanır
+            if (* (c + e) / g == 0) {//basamak sayısına ulaşıldı mı?
+                break;
+            }
+        }
+        if (f > h) {
+            h = f;//daha büyük basamak sayısını görünce
+        }
+    }//artık en büyük basamağın kaç olduğu h içinde var
+    for (e = 0, f = 1; e < h; ++ e) {
+        f *= 10;//10'un kuvveti ve h basamaklı sayı oluştur
+    }
+    for (e = 0; e < a; ++ e) {
+        for (g = 1; ; g *= 10) {//sayı kaç basamaklı ise 10'un üssü olarak
+            if (* (c + e) / g == 0) {
+                g = f / g;//10'un üzeri olarak en büyükten kaç eksikse bölerek bul
+                * (c + e) *= g;//eksik miktar kopya sayı ile çarpılır
+                break;
+            }
+        }
+    }
+    for (e = 0; e < a - 1; ++ e) {
+        for (f = e + 1; f < a; ++ f) {
+            if (* (c + e) < * (c + f)) {
+                g = * (c + e);//kopya düzenlenmiş sayılar büyükten küçüğe sıralanır
+                * (c + e) = * (c + f);
+                * (c + f) = g;
+                g = * (d + e);//büyükten küçüğe sıralanırken sıra numaraları da elde edilir
+                * (d + e) = * (d + f);
+                * (d + f) = g;
+            }
+        }
+    }
+    for (e = 0; e < a; ++ e) {
+        printf ("%d", * (b + * (d + e)));//gerçek sayılar, belirlenen sıra numaralarına göre ekrana yazdırılır
+    }
     return EXIT_SUCCESS;
 }
