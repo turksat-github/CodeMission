@@ -89,7 +89,14 @@ Altgörev 5 (50 puan): Ek bir kısıtlama yoktur.
 */
 #include <stdio.h>
 #include <stdlib.h>
-int main (int argc, char * (* argv), char * (* envp)) {
-    
+int main (int argc, char (* (* argv)), char (* (* envp))) {
+    int a;//kaç sayı var?
+    scanf ("%d%*c", &a);//kaç sayı olduğunu al
+    int *b;//sayıların yerleştirileceği pointer
+    c = (int *) calloc (a, sizeof (int));//liste için bellekte yer açılır
+    int d, e, f, g;
+    for (e = 0; e < a; ++ e) {
+        scanf ("%d%*c", (c + e));//kullanıcıdan sayılar alınıp listeye konulur
+    }
     return EXIT_SUCCESS;
 }
