@@ -42,53 +42,43 @@ Altgörev 3 (30 puan) : 1 ≤ N ≤ 10e5 , 1 ≤ Emre'nin sayıları ≤ 10e9
 int main (int argc, char (* (* argv)), char (* (* envp))) {
     int a;//Kaç sayı var?
     scanf ("%d%*c", &a);//Kaç sayı olduğunu al
-    int *b, *c, *d;//Sayıların asılları, kopyaları ve sıra numaraları
-    b = (int *) calloc (a, sizeof (int));//Asıl sayıların listesi
-    c = (int *) calloc (a, sizeof (int));//Kopya sayıların listesi
-    d = (int *) calloc (a, sizeof (int));//Sıra numaralarının listesi
-    int e, f, g, h;//h en büyük basamak sayısı
-    for (e = 0; e < a; ++ e) {
-        scanf ("%d%*c", (b + e));//Asıllar alınır
-        * (c + e) = * (b + e);//Kopyalara kopyalar konulur
-        * (d + e) = e;//sıradan sıra numaraları verilir
+    int *b, *c, *d, **e;
+    b = (int *) calloc (a, sizeof (int));//Sayıların listesi
+    c = (int *) calloc (a, sizeof (int));//Sayıların sıra numaları
+    d = (int *) calloc (a, sizeof (int));//Basamak sayıları
+    e = (int **) calloc (a, sizeof (int *));//Rakamların listesini içeren iki boyutlu dizinin satır numarası ile...
+    int f, g, h, i, j;
+    for (f = 0; f < a; ++ f) {
+        scanf ("%d%*c", (b + f));//Sayılar alınır
+        * (c + f) = f;//Sıradan sıra numaraları verilir
+        for (g = 1, h = 0; * (b + f) / g > 0; g *= 10, ++ h) {
+        }//h: basamak sayısı ve g: 10'un basamak sayısı kadar üstü alınmış hali
+        * (d + f) = h;//Basamak sayıları verilir
+        * (e + f) = (int *) calloc (h, sizeof (int));//İki boyutlu dizinin sütün kısmı oluşturulur
+        for (i = 0, g /= 10; i < h; ++ i, g /= 10) {
+            * (* (e + f) + i) = (* (b + f) / g) % 10;//iki boyutlu dizi sayılarının rakamları ile doldurulur
+        }
     }
-    for (e = 0, h = 1; e < a; ++ e) {
-        for (f = 1, g = 1; ; ++ f) {//f her sayı için basamak sayısı
-            g *= 10;//basamak sayısını bulasıya kadar g 10'a katlanır
-            if (* (c + e) / g == 0) {//basamak sayısına ulaşıldı mı?
-                break;
+    for (f = 0; f < a - 1; ++ f) {
+        for (g = f + 1; g < a; ++ g) {
+            if (* (d + f) < * (d + g)) {
+                h = * (d + g);
             }
-        }
-        if (f > h) {
-            h = f;//daha büyük basamak sayısını görünce
-        }
-    }//artık en büyük basamağın kaç olduğu h içinde var
-    for (e = 0, f = 1; e < h; ++ e) {
-        f *= 10;//10'un kuvveti ve h basamaklı sayı oluştur
-    }
-    for (e = 0; e < a; ++ e) {
-        for (g = 1; ; g *= 10) {//sayı kaç basamaklı ise 10'un üssü olarak
-            if (* (c + e) / g == 0) {
-                g = f / g;//10'un üzeri olarak en büyükten kaç eksikse bölerek bul
-                * (c + e) *= g;//eksik miktar kopya sayı ile çarpılır
-                break;
+            else {
+                h = * (d + f);
+            }
+            for (i = 0, j = 0; i < h; ++ i, ++ j) {
             }
         }
     }
-    for (e = 0; e < a - 1; ++ e) {
-        for (f = e + 1; f < a; ++ f) {
-            if (* (c + e) < * (c + f)) {
-                g = * (c + e);//kopya düzenlenmiş sayılar büyükten küçüğe sıralanır
-                * (c + e) = * (c + f);
-                * (c + f) = g;
-                g = * (d + e);//büyükten küçüğe sıralanırken sıra numaraları da elde edilir
-                * (d + e) = * (d + f);
-                * (d + f) = g;
-            }
-        }
+    for (f = 0; f < a; ++ f) {
+        printf ("%d", * (b + * (c + f)));//gerçek sayılar, belirlenen sıra numaralarına göre ekrana yazdırılır
     }
-    for (e = 0; e < a; ++ e) {
-        printf ("%d", * (b + * (d + e)));//gerçek sayılar, belirlenen sıra numaralarına göre ekrana yazdırılır
+    free (b);
+    free (c);
+    for (f = 0; f < a; ++ f) {
+        free (d + f);
     }
+    free (d);
     return EXIT_SUCCESS;
 }
