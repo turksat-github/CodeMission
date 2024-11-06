@@ -39,6 +39,7 @@ Altgörev 3 (30 puan) : 1 ≤ N ≤ 10e5 , 1 ≤ Emre'nin sayıları ≤ 10e9
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 int main (int argc, char (* (* argv)), char (* (* envp))) {
     int a;//Kaç sayı var?
     scanf ("%d%*c", &a);//Kaç sayı olduğunu al
@@ -47,7 +48,7 @@ int main (int argc, char (* (* argv)), char (* (* envp))) {
     c = (int *) calloc (a, sizeof (int));//Sayıların sıra numaları
     d = (int *) calloc (a, sizeof (int));//Basamak sayıları
     e = (int **) calloc (a, sizeof (int *));//Rakamların listesini içeren iki boyutlu dizinin satır numarası ile...
-    int f, g, h, i, j;
+    int f, g, h, i, j, l;
     for (f = 0; f < a; ++ f) {
         scanf ("%d%*c", (b + f));//Sayılar alınır
         * (c + f) = f;//Sıradan sıra numaraları verilir
@@ -61,13 +62,53 @@ int main (int argc, char (* (* argv)), char (* (* envp))) {
     }
     for (f = 0; f < a - 1; ++ f) {
         for (g = f + 1; g < a; ++ g) {
-            if (* (d + f) < * (d + g)) {
+            if (* (d + f) < * (d + g)) {//h: karşılaştırılan sayılardan hangisi daha büyük basamaklıysa, onun basamak sayısı
                 h = * (d + g);
+                for (i = 0, j = 0; j < h; ++ i, ++ j) {
+                    if (i == *(d + f)) {
+                        i = 0;
+                    }
+                    if (*(*(e + f) + i) < *(*(e + g) + j)) {
+                        void *k = malloc (*(d + f));
+                        memcpy (k, *(e + f), *(d + f) * sizeof (int));
+                        *(e + f) = realloc (*(e + f), *(d + g) * sizeof (int));
+                        memcpy (*(e + f), *(e + g), *(d + g) * sizeof (int));
+                        *(e + g) = realloc (*(e + g), *(d + f) * sizeof (int));
+                        memcpy (*(e + g), k, *(d + f) * sizeof (int));
+                        free (k);
+                        l = *(d + f);
+                        *(d + f) = *(d + g);
+                        *(d + g) = l;
+                        l = *(c + f);
+                        *(c + f) = *(c + g);
+                        *(c + g) = l;
+                        break;
+                    }
+                }
             }
             else {
                 h = * (d + f);
-            }
-            for (i = 0, j = 0; i < h; ++ i, ++ j) {
+                for (i = 0, j = 0; i < h; ++ i, ++ j) {
+                    if (j == *(d + g)) {
+                        j = 0;
+                    }
+                    if (*(*(e + f) + i) < *(*(e + g) + j)) {
+                        void *k = malloc (*(d + f));
+                        memcpy (k, *(e + f), *(d + f) * sizeof (int));
+                        *(e + f) = realloc (*(e + f), *(d + g) * sizeof (int));
+                        memcpy (*(e + f), *(e + g), *(d + g) * sizeof (int));
+                        *(e + g) = realloc (*(e + g), *(d + f) * sizeof (int));
+                        memcpy (*(e + g), k, *(d + f) * sizeof (int));
+                        free (k);
+                        l = *(d + f);
+                        *(d + f) = *(d + g);
+                        *(d + g) = l;
+                        l = *(c + f);
+                        *(c + f) = *(c + g);
+                        *(c + g) = l;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -76,9 +117,10 @@ int main (int argc, char (* (* argv)), char (* (* envp))) {
     }
     free (b);
     free (c);
-    for (f = 0; f < a; ++ f) {
-        free (d + f);
-    }
     free (d);
+    for (f = 0; f < a; ++ f) {
+        free (*(e + f));
+    }
+    free (e);
     return EXIT_SUCCESS;
 }
