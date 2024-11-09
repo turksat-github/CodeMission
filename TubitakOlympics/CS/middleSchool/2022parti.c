@@ -25,13 +25,60 @@ Alt Görev 1 [40 puan]
 Alt Görev 2 [60 puan]
 Ek kısıt yoktur
 
-Örnek Girdi
+Örnek Girdi 1
 5 3
 1 2
 2 3
 4 5
 
-Örnek Çıktı
+Örnek Çıktı 1
+2
+
+Örnek Girdi 2
+10 7
+2 5
+1 4
+3 6
+1 2
+6 7
+8 9
+9 10
+
+Örnek Çıktı 2
+3
+
+Örnek Girdi 3
+11 9
+2 6
+9 7
+3 5
+1 4
+5 4
+2 7
+8 10
+3 1
+11 1
+
+Örnek Çıktı 3
+2
+
+Örnek Girdi 4
+18 13
+1 18
+2 17
+3 16
+4 15
+5 14
+6 13
+7 12
+8 11
+9 10
+1 2
+3 4
+5 6
+7 8
+
+Örnek Çıktı 4
 2
 */
 #include <stdio.h>
