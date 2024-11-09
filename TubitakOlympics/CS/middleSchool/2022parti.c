@@ -90,7 +90,7 @@ int main (int argc, char (* (* argv)), char (* (* envp))) {
     int * c, ** d;//Sayıları test alanı, kurallar
     c = (int *) calloc (a, sizeof (int));//Kişilerin olup olmadığını tutacak
     d = (int **) calloc (b, sizeof (int *));//Kuralları tutan double pointer to int
-    int e, f, g, h, i, j;
+    int e, f, g, h;
     for (e = 0; e < b; ++ e) {//Kurallar alınır
         *(d + e) = (int *) calloc (2, sizeof (int));
         scanf ("%d %d%*c", &*(*(d + e) + 0), &*(*(d + e) + 1));//Kuralları alıyorum
