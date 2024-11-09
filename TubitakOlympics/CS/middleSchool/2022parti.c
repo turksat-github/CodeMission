@@ -83,7 +83,47 @@ Ek kısıt yoktur
 */
 #include <stdio.h>
 #include <stdlib.h>
-int main (int argc, char * (* argv), char * (* envp)) {
-    
+
+int main (int argc, char (* (* argv)), char (* (* envp))) {
+    int a, b;//Kaç sayı ve kaç kural var?
+    scanf ("%d %d%*c", &a, &b);//Kaç sayı ve kaç kural olduğunu al
+    int * c, ** d;//Sayıları test alanı, kurallar
+    c = (int *) calloc (a, sizeof (int));//Kişilerin olup olmadığını tutacak
+    d = (int **) calloc (b, sizeof (int *));//Kuralları tutan double pointer to int
+    int e, f, g, h, i, j;
+    for (e = 0; e < b; ++ e) {//Kurallar alınır
+        *(d + e) = (int *) calloc (2, sizeof (int));
+        scanf ("%d %d%*c", &*(*(d + e) + 0), &*(*(d + e) + 1));//Kuralları alıyorum
+        -- *(*(d + e) + 0);//Kurallar 1'den başladığı için 0'dan başlara dönüştürmek için
+        -- *(*(d + e) + 1);//index 0 kullanacağım için index 1 verilenleri 1 eksiltiyorum
+    }
+    h = a;//davet edilebilecek en büyük sayı kişi sayısıdır
+    for (e = 0; e < a; ++ e) {//Tek tek bütün kişileri deniyorum
+        *(c + e) = 1;//Denediğim kişiyi işaretliyorum. 0: Gelmiyor, 1: Geliyor
+        for (f = 0; f < b; ++ f) {//Bütün kuralları deniyorum
+            if ((*(c + *(*(d + f) + 0)) + *(c + *(*(d + f) + 1))) == 1) {//Kuraldaki ikiliden biri boş diğeri dolu ise
+                *(c + *(*(d + f) + 0)) = 1;//İlkini dolu olarak işaretle
+                *(c + *(*(d + f) + 1)) = 1;//İkinciyi dolu olarak işaretle
+                f = 0;//Kurallara tekrar baştan bakmamı sağla
+            }
+        }
+        for (f = 0, g = 0; f < a; ++ f) {//Kaç kişi davetli olarak işaretlenmiş sayalım
+            if (*(c + f) == 1) {//Davetli olarak işaretlenmişse
+                ++ g;//Davetli kişi sayısını 1 artır
+            }
+        }
+        if (g < h) {//Davet edilebilecek en az kişi sayımız, şimdi bulduğumuzdan çoksa
+            h = g;//Davet edilecek kişi sayısını güncelle
+        }
+        for (f = 0; f < a; ++ f) {//tüm kişileri davetsiz olarak işaretle
+            *(c + f) = 0;
+        }
+    }
+    printf ("%d", h);//En az olan sonuç kaçsa ekrana yazılır
+    free (c);
+    for (e = 0; e < b; ++ e) {
+        free (*(d + e));
+    }
+    free (d);
     return EXIT_SUCCESS;
 }
