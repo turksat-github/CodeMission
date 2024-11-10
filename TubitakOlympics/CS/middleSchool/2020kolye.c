@@ -13,7 +13,7 @@ Takip eden iki satırda ise N uzunluğunda olan A ve B kolyelerinin boncuk dizil
 Belirtilen tüm l − r ikilileri için hesaplanan değerlerin toplamını yazdırmalısınız.
 
 Limitler
-1 ≤ N ≤ 2 ∗ 10e5
+1 ≤ N ≤ 2 * 10e5
 Her 1 ≤ i ≤ N için 1 ≤ A[i], B[i] ≤ N
 
 Örnek Girdi
