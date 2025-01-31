@@ -92,7 +92,60 @@ Ahmet Efendi en fazla 3 defa aç kapat yapabileceği için her siparişte makina
 */
 #include <stdio.h>
 #include <stdlib.h>
+int compare (const void * a, const void * b) {
+    long long diff = * (long long *) b - * (long long *) a;
+    return (diff > 0) ? 1 : ((diff < 0) ? - 1 : 0);
+}
 int main (int argc, char * (* argv), char * (* envp)) {
-    
+    int N, K;
+    scanf ("%d %d", &N, &K);
+    long long * T = (long long *) malloc (N * sizeof (long long));
+    for (int i = 0; i < N; ++ i) {
+        scanf ("%lld", &T [i]);
+    }
+
+    long long original_duration = (T [N - 1] + 1) - T [0];
+
+    if (N == 1) {
+        printf ("%lld\n", original_duration);
+        free (T);
+        return 0;
+    }
+
+    int num_gaps = N - 1;
+    long long * gaps = (long long *) malloc (num_gaps * sizeof (long long));
+    for (int i = 0; i < num_gaps; ++ i) {
+        gaps [i] = T [i + 1] - T [i] - 1;
+    }
+
+    qsort (gaps, num_gaps, sizeof (long long), compare);
+
+    int take = K - 1;
+    if (take > num_gaps) {
+        take = num_gaps;
+    }
+
+    long long sum_gaps = 0;
+    for (int i = 0; i < take; ++ i) {
+        sum_gaps += gaps [i];
+    }
+
+    long long result = original_duration - sum_gaps;
+    printf ("%lld\n", result);
+
+    free (T);
+    free (gaps);
     return EXIT_SUCCESS;
 }
+
+/*
+Explanation
+
+1. Reading Input: The code reads the number of orders N and the maximum number of on/off cycles K, followed by the times at which each order is received.
+2. Initial Duration Calculation: The initial duration is calculated as if all orders are processed in a single continuous session, from the first order's start time to the delivery time of the last order.
+3. Gap Calculation: Gaps between consecutive orders are computed. These gaps represent the time the machine can be turned off between groups of orders.
+4. Sorting Gaps: The gaps are sorted in descending order to prioritize the largest gaps, which are then used to split the orders into groups.
+5. Summing Gaps: The sum of the largest K − 1 gaps is subtracted from the initial duration to get the minimum total running time required.
+
+This approach ensures that the machine is used efficiently, minimizing the total running time while respecting the constraint on the number of on/off cycles.
+*/
