@@ -9,15 +9,20 @@ import json
 import threading
 import socket
 import time
+from dateutil.relativedelta import relativedelta
+import threading
 class AFTNDatabase:
     def __init__(self, db_path: str = "aftn_messages.db"):
         self.db_path = db_path
-        self.conn = self.initialize_database()
+        self.conn = None
+        self.lock = threading.Lock() # Thread safety
+        self.initialize_database()
     def initialize_database(self) -> sqlite3.Connection:
-        new_db = not os.path.exists(self.db_path)
-        conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row  # Dictionary-like row access
-        cursor = conn.cursor()
+        with self.lock: #Wrap in lock
+            new_db = not os.path.exists(self.db_path)
+            conn = sqlite3.connect(self.db_path)
+            conn.row_factory = sqlite3.Row #Dictionary-like row access
+            cursor = conn.cursor()
         if new_db:
             cursor.executescript(''' CREATE TABLE messages (message_id INTEGER PRIMARY KEY AUTOINCREMENT, aftn_header TEXT NOT NULL, priority_id INTEGER NOT NULL, filing_time DATETIME NOT NULL, originator TEXT NOT NULL, content TEXT NOT NULL, status TEXT NOT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (priority_id) REFERENCES priorities(priority_id)); CREATE TABLE addresses (address_id INTEGER PRIMARY KEY AUTOINCREMENT, message_id INTEGER NOT NULL, address_type TEXT NOT NULL, address_value TEXT NOT NULL, FOREIGN KEY (message_id) REFERENCES messages(message_id)); CREATE TABLE priorities (priority_id INTEGER PRIMARY KEY AUTOINCREMENT, priority_code TEXT NOT NULL UNIQUE, description TEXT NOT NULL); CREATE TABLE message_types (type_id INTEGER PRIMARY KEY AUTOINCREMENT, type_code TEXT NOT NULL UNIQUE, description TEXT NOT NULL); CREATE TABLE message_type_mapping (mapping_id INTEGER PRIMARY KEY AUTOINCREMENT, message_id INTEGER NOT NULL, type_id INTEGER NOT NULL, FOREIGN KEY (message_id) REFERENCES messages(message_id), FOREIGN KEY (type_id) REFERENCES message_types(type_id)); CREATE TABLE routing_info (routing_id INTEGER PRIMARY KEY AUTOINCREMENT, message_id INTEGER NOT NULL, route_point TEXT NOT NULL, timestamp DATETIME NOT NULL, status TEXT NOT NULL, FOREIGN KEY (message_id) REFERENCES messages(message_id)); CREATE TABLE station_directory (station_id INTEGER PRIMARY KEY AUTOINCREMENT, station_code TEXT UNIQUE NOT NULL, station_name TEXT NOT NULL, country TEXT NOT NULL, region TEXT NOT NULL, coordinates TEXT, ip_address TEXT, port INTEGER, active BOOLEAN DEFAULT TRUE); CREATE TABLE audit_log (log_id INTEGER PRIMARY KEY AUTOINCREMENT, message_id INTEGER, action TEXT NOT NULL, performed_by TEXT NOT NULL, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, details TEXT, FOREIGN KEY (message_id) REFERENCES messages(message_id)); CREATE TABLE network_config (config_id INTEGER PRIMARY KEY AUTOINCREMENT, local_station_code TEXT NOT NULL, listen_ip TEXT NOT NULL, listen_port INTEGER NOT NULL, last_updated DATETIME DEFAULT CURRENT_TIMESTAMP); ''')
             cursor.executescript(''' CREATE INDEX idx_messages_filing_time ON messages(filing_time); CREATE INDEX idx_addresses_message_id ON addresses(message_id); CREATE INDEX idx_routing_info_message_id ON routing_info(message_id); ''')
@@ -40,12 +45,19 @@ class AFTNDatabase:
             self.conn.close()
             print("Database connection closed.")
     def store_message(self, aftn_header: str, priority_code: str, filing_time: datetime.datetime, originator: str, addressees: List[str], content: str, message_type: str) -> int:
-        cursor = self.conn.cursor()
+        with self.lock: #Wrap in lock
+            cursor = self.conn.cursor()
         try:
             cursor.execute('SELECT priority_id FROM priorities WHERE priority_code = ?', (priority_code,))
-            priority_id = cursor.fetchone()[0]
+            priority_row = cursor.fetchone()
+            if not priority_row: #Error handling
+                raise ValueError(f"Invalid priority code: {priority_code}")
+            priority_id = priority_row[0]
             cursor.execute('SELECT type_id FROM message_types WHERE type_code = ?', (message_type,))
-            type_id = cursor.fetchone()[0]
+            message_row = cursor.fetchone()
+            if not message_row: #Error handling
+                raise ValueError(f"Invalid message code: {message_type}")
+            type_id = message_row[0]
             cursor.execute('INSERT INTO messages (aftn_header, priority_id, filing_time, originator, content, status) VALUES (?, ?, ?, ?, ?, ?)', (aftn_header, priority_id, filing_time, originator, content, 'RECEIVED'))
             message_id = cursor.lastrowid
             cursor.execute('INSERT INTO addresses (message_id, address_type, address_value) VALUES (?, ?, ?)', (message_id, 'ORIGINATOR', originator))
@@ -113,6 +125,11 @@ class AFTNDatabase:
         cursor = self.conn.cursor()
         cursor.execute(query, params)
         return [dict(row) for row in cursor.fetchall()]
+    def station_exists(self, station_code: str) -> bool: #Validation method
+        with self.lock:
+            cursor = self.conn.cursor()
+            cursor.execute('SELECT 1 FROM station_directory WHERE station_code = ?', (station_code,))
+            return cursor.fetchone() is not None
     def get_all_stations(self) -> List[Dict[str, Any]]:
         cursor = self.conn.cursor()
         cursor.execute('SELECT * FROM station_directory ORDER BY station_code')
@@ -148,8 +165,8 @@ class AFTNDatabase:
             day, hour, minute = map(int, [filing_time_str[:2], filing_time_str[2:4], filing_time_str[4:]])
             now = datetime.datetime.now()
             filing_time = datetime.datetime(now.year, now.month, day, hour, minute)
-            if filing_time > now and (now.day - day) > 20:
-                filing_time = filing_time.replace(month=filing_time.month - 1 if filing_time.month > 1 else 12, year=filing_time.year - 1 if filing_time.month == 1 else filing_time.year)
+            if filing_time > now and (filing_time - now).days > 20: #Improved date adjustment
+                filing_time = filing_time - relativedelta(months=1)
         except ValueError:
             raise ValueError(f"Invalid filing time: {filing_time_str}")
         address_parts = lines[1].strip().split()
@@ -251,8 +268,11 @@ class AFTNNetworkHandler:
                     buffer = messages.pop()
                     for msg in messages:
                         if msg.strip():
-                            message_id = self.db.store_raw_message(msg)
-                            print(f"Stored message {message_id} from {addr}")
+                            try:  # NEW: Error wrapping
+                                message_id = self.db.store_raw_message(msg)
+                                print(f"Stored message {message_id} from {addr}")
+                            except Exception as e:
+                                print(f"Error storing message: {str(e)}")
         except Exception as e:
             print(f"Client {addr} error: {e}")
         finally:
@@ -435,15 +455,35 @@ class AFTNApp:
         if not all([self.compose_priority.get(), self.compose_from.get(), self.compose_to.get(), self.compose_content.get("1.0", tk.END).strip()]):
             messagebox.showerror("Error", "All fields are required")
             return
+        if not self.db.station_exists(self.compose_from.get()): #Validate stations
+            messagebox.showerror("Error", f"Invalid originator station: {self.compose_from.get()}")
+            return
+        for addr in self.compose_to.get().split():
+            station_info = self.db.get_station_network_info(addr)
+            if not station_info:
+                messagebox.showerror("Error", f"No network info for {addr}")
+                return
+            if not self.db.station_exists(addr):
+                messagebox.showerror("Error", f"Invalid addressee station: {addr}")
+                return
         msg = AFTNMessageBuilder.create_aftn_message(self.compose_priority.get(), self.compose_to.get().split(), self.compose_from.get(), self.compose_content.get("1.0", tk.END))
         if messagebox.askyesno("Confirm", "Send this message?"):
-            config = self.db.get_network_config()
-            if self.network.send_message(config['listen_ip'], config['listen_port'], msg):
-                msg_id = self.db.store_raw_message(msg)
-                self.db.update_message_status(msg_id, 'SENT', 'USER')
-                messagebox.showinfo("Success", "Message sent")
-                self.clear_compose()
-                self.refresh_messages()
+            def send_async(): #Run in background thread
+                try:
+                    recipients = self.compose_to.get().split()
+                    for addr in recipients:
+                        station_info = self.db.get_station_network_info(addr)
+                        if not station_info:
+                            continue  # Already validated earlier
+                        if self.network.send_message(station_info['ip_address'], station_info['port'], msg): # Send to recipient's IP/port
+                            msg_id = self.db.store_raw_message(msg)
+                            self.db.update_message_status(msg_id, 'SENT', 'USER')
+                    self.root.after(0, lambda: messagebox.showinfo("Success", "Message sent"))
+                    self.root.after(0, self.clear_compose)
+                    self.root.after(0, self.refresh_messages)
+                except Exception as e:
+                    self.root.after(0, lambda: messagebox.showerror("Error", str(e)))
+            threading.Thread(target=send_async, daemon=True).start()
     def save_draft(self):
         if not all([self.compose_from.get(), self.compose_content.get("1.0", tk.END).strip()]):
             messagebox.showerror("Error", "Originator and content are required")
