@@ -16,7 +16,7 @@ class AFTNDatabase:
         self.db_path = db_path
         self.conn = None
         self.lock = threading.Lock() # Thread safety
-        self.initialize_database()
+        self.conn = self.initialize_database()
     def initialize_database(self) -> sqlite3.Connection:
         with self.lock: #Wrap in lock
             new_db = not os.path.exists(self.db_path)
@@ -30,7 +30,8 @@ class AFTNDatabase:
             cursor.executemany('INSERT INTO priorities (priority_code, description) VALUES (?, ?)', priorities)
             message_types = [('FPL', 'Filed Flight Plan - Contains details of intended flight'), ('CHG', 'Modification Message - Changes to previously filed flight plan'), ('CNL', 'Cancellation Message - Cancels previously filed flight plan'), ('DLA', 'Delay Message - Reports delay to previously announced departure time'), ('DEP', 'Departure Message - Reports actual departure of aircraft'), ('ARR', 'Arrival Message - Reports actual arrival of aircraft'), ('NOTAM', 'Notice to Airmen - Essential information for flight operations'), ('METAR', 'Meteorological Aerodrome Report - Routine weather observation'), ('TAF', 'Terminal Aerodrome Forecast - Airport weather forecast'), ('SIGMET', 'Significant Meteorological Information - Weather hazard warnings'), ('ATIS', 'Automatic Terminal Information Service - Airport information'), ('ATC', 'Air Traffic Control Messages - Clearances, instructions, and advisories'), ('ALR', 'Alerting Message - Regarding aircraft in emergency'), ('RQP', 'Request Flight Plan - Request for flight plan information'), ('RQS', 'Request Supplementary Flight Plan Information')]
             cursor.executemany('INSERT INTO message_types (type_code, description) VALUES (?, ?)', message_types)
-            cursor.execute('INSERT INTO network_config (local_station_code, listen_ip, listen_port) VALUES (?, ?, ?)', ('EGLLZPZX', '127.0.0.1', 5000))
+            cursor.execute('INSERT INTO network_config (local_station_code, listen_ip, listen_port) VALUES (?, ?, ?)', ('EGLLZPZX', '127.0.0.1', 50200))
+            #cursor.execute('INSERT INTO network_config (local_station_code, listen_ip, listen_port) VALUES (?, ?, ?)', ('LTAATCXX', '135D0D10D15', 50160))
             self._populate_sample_stations(cursor)
             conn.commit()
             print(f"New database created at {self.db_path}")
